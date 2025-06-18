@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+        
+        PAGE_TITLE: 'QBank - Neurosurgery MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'surgery_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+        PAGE_ID: pageIdAuto, // Automatically set from filename
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+
+
+
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical MCQs - Psychiatry</title>
+</head>
+<body>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Psychiatry Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> Which of the following is a positive symptom of schizophrenia?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hallucination</li>
+            <li class="option" data-correct="false">B. Delusion</li>
+            <li class="option" data-correct="true">C. A&B</li>
+            <li class="option" data-correct="false">D. Social isolation</li>
+            <li class="option" data-correct="false">E. Anhedonia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Hallucinations are a positive symptom, but not the only one listed.<br>
+            b. Incorrect: Delusions are a positive symptom, but not the only one listed.<br>
+            c. Correct: Both hallucinations and delusions are positive symptoms of schizophrenia.<br>
+            d. Incorrect: Social isolation is a negative symptom.<br>
+            e. Incorrect: Anhedonia is a negative symptom.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> The primary treatment for schizophrenia involves:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Antidepressants</li>
+            <li class="option" data-correct="true">B. Antipsychotic medications</li>
+            <li class="option" data-correct="false">C. Benzodiazepines</li>
+            <li class="option" data-correct="false">D. Stimulants</li>
+            <li class="option" data-correct="false">E. Anticonvulsants</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Antidepressants are not the primary treatment for psychosis.<br>
+            b. Correct: Antipsychotic medications are the cornerstone of treatment for schizophrenia.<br>
+            c. Incorrect: Benzodiazepines are used for short-term agitation, not as a primary treatment.<br>
+            d. Incorrect: Stimulants can worsen psychosis.<br>
+            e. Incorrect: Anticonvulsants are not first-line treatment for schizophrenia.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> DSM 5 criteria for diagnosing generalized anxiety disorder is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 2 years</li>
+            <li class="option" data-correct="true">B. 6 months</li>
+            <li class="option" data-correct="false">C. 3 months</li>
+            <li class="option" data-correct="false">D. 1 month</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: 2 years is the duration for persistent depressive disorder.<br>
+            b. Correct: DSM-5 requires excessive worry for at least 6 months for a GAD diagnosis.<br>
+            c. Incorrect: 3 months is not the specific duration criterion for GAD.<br>
+            d. Incorrect: 1 month is a duration criterion for other disorders like panic disorder or acute stress disorder.<br>
+            e. Incorrect: The correct duration is listed as option B.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Which of the following traits is present in paranoid personality disorder:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. seek for perfectionism</li>
+            <li class="option" data-correct="false">B. Rapid shifting of emotion</li>
+            <li class="option" data-correct="false">C. unstable relationships</li>
+            <li class="option" data-correct="true">D. general mistrust to others</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Perfectionism is a trait of Obsessive-Compulsive Personality Disorder (OCPD).<br>
+            b. Incorrect: Rapidly shifting emotion is characteristic of Borderline Personality Disorder.<br>
+            c. Incorrect: Unstable relationships are characteristic of Borderline Personality Disorder.<br>
+            d. Correct: The core feature of Paranoid Personality Disorder is pervasive mistrust and suspicion of others.<br>
+            e. Incorrect: The correct trait is listed as option D.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> The duration treatment of the 1st major depressive episode is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 2 years</li>
+            <li class="option" data-correct="true">B. 9-12 months</li>
+            <li class="option" data-correct="false">C. A&B</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: 2 years or more is considered maintenance therapy for recurrent or severe cases.<br>
+            b. Correct: This timeframe covers the acute treatment phase plus a 4-9 month continuation phase to prevent relapse.<br>
+            c. Incorrect: Option A is incorrect.<br>
+            d. Incorrect: Option A is incorrect.<br>
+            e. Incorrect: Option B is the standard recommendation.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Which of the following is negative psychotic feature;</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Delusion</li>
+            <li class="option" data-correct="false">B. auditory hallucination</li>
+            <li class="option" data-correct="false">C. Disorganized speech</li>
+            <li class="option" data-correct="true">D. Anhedonia</li>
+            <li class="option" data-correct="false">E. Disorganized behavior</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Delusions are a positive symptom.<br>
+            b. Incorrect: Auditory hallucinations are a positive symptom.<br>
+            c. Incorrect: Disorganized speech is a positive symptom.<br>
+            d. Correct: Anhedonia (inability to feel pleasure) is a classic negative symptom.<br>
+            e. Incorrect: Disorganized behavior is a positive symptom.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> The most important feature (key) to diagnose manic episode is?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anhedonia</li>
+            <li class="option" data-correct="false">B. Low mood</li>
+            <li class="option" data-correct="true">C. Elevated mood</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Anhedonia is a core feature of depression.<br>
+            b. Incorrect: Low mood is the key feature of a depressive episode.<br>
+            c. Correct: The cardinal feature of a manic episode is a distinct period of elevated, expansive, or irritable mood.<br>
+            d. Incorrect: The options are contradictory.<br>
+            e. Incorrect: The correct feature is listed.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Trichotillomania disorder is;</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. skin picking</li>
+            <li class="option" data-correct="true">B. Hair pulling</li>
+            <li class="option" data-correct="false">C. hoarding disorder</li>
+            <li class="option" data-correct="false">D. body dysmorphic disorder</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Skin picking is excoriation disorder.<br>
+            b. Correct: Trichotillomania is the irresistible urge to pull out one's own hair.<br>
+            c. Incorrect: Hoarding disorder is a distinct diagnosis.<br>
+            d. Incorrect: Body dysmorphic disorder involves perceived flaws in appearance.<br>
+            e. Incorrect: Only option B is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> No purging (use of laxatives or induced vomiting) in</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. anorexia nervosa</li>
+            <li class="option" data-correct="false">B. Bulimia nervosa</li>
+            <li class="option" data-correct="true">C. Bing eating disorder</li>
+            <li class="option" data-correct="false">D. all of above</li>
+            <li class="option" data-correct="false">E. non of above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Anorexia nervosa has a binge-eating/purging subtype.<br>
+            b. Incorrect: Bulimia nervosa is defined by compensatory behaviors, often purging.<br>
+            c. Correct: Binge eating disorder is characterized by binging without compensatory behaviors like purging.<br>
+            d. Incorrect: Options A and B are incorrect.<br>
+            e. Incorrect: Option C is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Body mass index in anorexia nervosa is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Within average range</li>
+            <li class="option" data-correct="false">B. above average range</li>
+            <li class="option" data-correct="true">C. below average range</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. A&B</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: A key criterion is significantly low body weight.<br>
+            b. Incorrect: This is the opposite of anorexia nervosa.<br>
+            c. Correct: By definition, individuals with anorexia have a BMI below the minimally normal range.<br>
+            d. Incorrect: The options are mutually exclusive.<br>
+            e. Incorrect: The options are mutually exclusive.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Which of the following disorders is an anxiety disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anorexia nervosa</li>
+            <li class="option" data-correct="false">B. Major depressive episode</li>
+            <li class="option" data-correct="false">C. social phobia</li>
+            <li class="option" data-correct="false">D. panic disorder</li>
+            <li class="option" data-correct="true">E. C&D</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Anorexia nervosa is an Eating Disorder.<br>
+            b. Incorrect: Major depressive episode is part of a Depressive Disorder.<br>
+            c. Incorrect: Social phobia is an anxiety disorder, but not the only one listed.<br>
+            d. Incorrect: Panic disorder is an anxiety disorder, but not the only one listed.<br>
+            e. Correct: Both social phobia (social anxiety disorder) and panic disorder are classified as anxiety disorders.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> No psychotic features at all in ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mania</li>
+            <li class="option" data-correct="false">B. Schizophrenia</li>
+            <li class="option" data-correct="true">C. Hypomania</li>
+            <li class="option" data-correct="false">D. A&B</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Severe mania can include psychotic features.<br>
+            b. Incorrect: Schizophrenia is a primary psychotic disorder.<br>
+            c. Correct: By definition, an episode is manic (not hypomanic) if psychotic features are present.<br>
+            d. Incorrect: Both A and B can have psychotic features.<br>
+            e. Incorrect: Option C is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> What are the clinical features of panic disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. tachycardia</li>
+            <li class="option" data-correct="false">B. shortness of breath</li>
+            <li class="option" data-correct="false">C. Fear of dying</li>
+            <li class="option" data-correct="true">D. all of the above</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Tachycardia is a feature, but not the only one.<br>
+            b. Incorrect: Shortness of breath is a feature, but not the only one.<br>
+            c. Incorrect: Fear of dying is a feature, but not the only one.<br>
+            d. Correct: Tachycardia, shortness of breath, and fear of dying are all classic features of a panic attack.<br>
+            e. Incorrect: The listed options are all correct features.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> Which of the following is a hallmark feature of Autism Spectrum Disorder (ASD)?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Social deficit</li>
+            <li class="option" data-correct="false">B. Low IQ</li>
+            <li class="option" data-correct="false">C. Lack of interest in physical appearance</li>
+            <li class="option" data-correct="false">D. Obsessive-compulsive traits</li>
+            <li class="option" data-correct="false">E. Language impairment</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: Persistent deficits in social communication and interaction are the core, defining feature of ASD.<br>
+            b. Incorrect: Low IQ is a common comorbidity, not a core diagnostic feature.<br>
+            c. Incorrect: This is not a diagnostic criterion.<br>
+            d. Incorrect: While repetitive behaviors are a core feature, the social deficit is the primary hallmark.<br>
+            e. Incorrect: Language impairment is not required for diagnosis; the key is the social use of language.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> Which of the following is NOT included in the diagnostic criteria for ASD?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Persistent deficits in social communication</li>
+            <li class="option" data-correct="false">B. Repetitive behaviors or restricted interests</li>
+            <li class="option" data-correct="true">C. Language delay should be present</li>
+            <li class="option" data-correct="false">D. Symptoms must be present in early developmental period</li>
+            <li class="option" data-correct="false">E. Affect functioning</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: This is DSM-5 criterion A for ASD.<br>
+            b. Incorrect: This is DSM-5 criterion B for ASD.<br>
+            c. Correct: Language delay is common but is NOT a required diagnostic criterion.<br>
+            d. Incorrect: This is DSM-5 criterion C for ASD.<br>
+            e. Incorrect: Deficits in affect functioning are part of criterion A.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> The core symptoms of ADHD include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Social communication impairment</li>
+            <li class="option" data-correct="true">B. Impulsivity, hyperactivity, and inattention</li>
+            <li class="option" data-correct="false">C. Repetitive behaviors and restricted interests</li>
+            <li class="option" data-correct="false">D. Hallucinations and delusions</li>
+            <li class="option" data-correct="false">E. Anxiety and depression</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: This is a core feature of ASD.<br>
+            b. Correct: ADHD is defined by a persistent pattern of inattention and/or hyperactivity-impulsivity.<br>
+            c. Incorrect: These are core features of ASD.<br>
+            d. Incorrect: These are symptoms of psychosis.<br>
+            e. Incorrect: These are common comorbidities, not core symptoms of ADHD.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> At what age must symptoms of ADHD typically begin for a diagnosis to be made?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Before the age of 5 years</li>
+            <li class="option" data-correct="true">B. Before the age of 12 years</li>
+            <li class="option" data-correct="false">C. Before the age of 18 years</li>
+            <li class="option" data-correct="false">D. At any age</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: The diagnostic threshold is higher.<br>
+            b. Correct: According to DSM-5, several symptoms must be present before age 12.<br>
+            c. Incorrect: This is too late for the onset criteria.<br>
+            d. Incorrect: ADHD is a neurodevelopmental disorder with childhood onset.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> The first-line pharmacological treatment for ADHD is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Antidepressants</li>
+            <li class="option" data-correct="true">B. Stimulants such as methylphenidate</li>
+            <li class="option" data-correct="false">C. Antipsychotics</li>
+            <li class="option" data-correct="false">D. Benzodiazepines</li>
+            <li class="option" data-correct="false">E. Antiepileptics</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Certain antidepressants are second or third-line options.<br>
+            b. Correct: Stimulant medications are the most effective and first-line treatment for ADHD.<br>
+            c. Incorrect: Antipsychotics are not used for core ADHD symptoms.<br>
+            d. Incorrect: Benzodiazepines are not used for ADHD.<br>
+            e. Incorrect: Antiepileptics are not a standard treatment for ADHD.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Adaptive functioning deficits in Intellectual Disability include difficulties in:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Social, conceptual, and practical domains</li>
+            <li class="option" data-correct="false">B. Only cognitive domains</li>
+            <li class="option" data-correct="false">C. Only academic performance</li>
+            <li class="option" data-correct="false">D. Emotional regulation</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: Diagnosis requires deficits in all three adaptive domains: conceptual, social, and practical.<br>
+            b. Incorrect: Deficits must also be present in social and practical domains.<br>
+            c. Incorrect: Academic performance is only one part of the conceptual domain.<br>
+            d. Incorrect: This is part of the broader domains, not a standalone pillar.<br>
+            e. Incorrect: Option A is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Which of the following is a common feature of OCD?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Persistent hallucinations</li>
+            <li class="option" data-correct="true">B. Intrusive and distressing thoughts</li>
+            <li class="option" data-correct="false">C. Persistent mood swings</li>
+            <li class="option" data-correct="false">D. Paranoid delusions</li>
+            <li class="option" data-correct="false">E. Memory loss</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Hallucinations are features of psychotic disorders.<br>
+            b. Correct: This describes obsessions, which are a core feature of OCD.<br>
+            c. Incorrect: Mood swings are more characteristic of mood disorders.<br>
+            d. Incorrect: Paranoid delusions are features of psychotic disorders.<br>
+            e. Incorrect: Memory loss is not a core feature of OCD.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> In OCD, compulsions are:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Irrational fears</li>
+            <li class="option" data-correct="false">B. Physical symptoms of anxiety</li>
+            <li class="option" data-correct="true">C. Repetitive behaviors aimed at reducing distress</li>
+            <li class="option" data-correct="false">D. Fixed false beliefs</li>
+            <li class="option" data-correct="false">E. Sudden mood changes</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Irrational fears are more aligned with phobias.<br>
+            b. Incorrect: These are the result of obsessions, which compulsions aim to alleviate.<br>
+            c. Correct: Compulsions are repetitive acts performed to reduce the anxiety caused by obsessions.<br>
+            d. Incorrect: Fixed false beliefs are delusions.<br>
+            e. Incorrect: Sudden mood changes are not a defining feature of compulsions.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> Which of the following criteria is NOT part of diagnosing substance use disorder according to DSM-5?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Tolerance</li>
+            <li class="option" data-correct="false">B. Withdrawal symptoms</li>
+            <li class="option" data-correct="false">C. Continued use despite health consequences</li>
+            <li class="option" data-correct="true">D. Experiencing euphoria</li>
+            <li class="option" data-correct="false">E. Spending significant time obtaining the substance</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Tolerance is a diagnostic criterion.<br>
+            b. Incorrect: Withdrawal is a diagnostic criterion.<br>
+            c. Incorrect: Continued use despite negative consequences is a diagnostic criterion.<br>
+            d. Correct: Experiencing euphoria is an effect of a drug, not a criterion for the disorder.<br>
+            e. Incorrect: Spending significant time on the substance is a diagnostic criterion.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> Which of the following is the most common sleep disorder in the general population?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Narcolepsy</li>
+            <li class="option" data-correct="false">B. Obstructive Sleep Apnea (OSA)</li>
+            <li class="option" data-correct="true">C. Insomnia</li>
+            <li class="option" data-correct="false">D. Restless Legs Syndrome (RLS)</li>
+            <li class="option" data-correct="false">E. Parasomnias</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Narcolepsy is relatively rare.<br>
+            b. Incorrect: OSA is common, but insomnia is generally considered more prevalent.<br>
+            c. Correct: Insomnia disorder is the most prevalent sleep disorder.<br>
+            d. Incorrect: RLS is less common than insomnia.<br>
+            e. Incorrect: Parasomnias are less common than insomnia.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> Normal sleep requirement is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 10 hr</li>
+            <li class="option" data-correct="false">B. 12 hr</li>
+            <li class="option" data-correct="false">C. A or B</li>
+            <li class="option" data-correct="true">D. 7.5 hr</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: 10 hours is on the high end for adults.<br>
+            b. Incorrect: 12 hours is excessive for most adults.<br>
+            c. Incorrect: Both options are outside the typical range for adults.<br>
+            d. Correct: This falls squarely within the recommended 7-9 hours of sleep for adults.<br>
+            e. Incorrect: Option D is a reasonable answer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> Which of the following best describes the current perspective of homosexuality in psychiatry according to the DSM-5?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Homosexuality is classified as a mental disorder.</li>
+            <li class="option" data-correct="true">B. Homosexuality is considered a normal variation of human sexuality.</li>
+            <li class="option" data-correct="false">C. Homosexuality is categorized as a personality disorder.</li>
+            <li class="option" data-correct="false">D. Homosexuality is associated with psychosis.</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Homosexuality was removed from the DSM in 1973.<br>
+            b. Correct: The modern consensus is that homosexuality is a normal variant of human sexuality.<br>
+            c. Incorrect: It is not a personality disorder.<br>
+            d. Incorrect: There is no association between homosexuality and psychosis.<br>
+            e. Incorrect: Option B is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> Suicide attempts are more common in ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Males</li>
+            <li class="option" data-correct="true">B. Females</li>
+            <li class="option" data-correct="false">C. Males and females have equal risk</li>
+            <li class="option" data-correct="false">D. non of the above</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Males have higher rates of completed suicide.<br>
+            b. Correct: Females have a higher rate of suicide attempts.<br>
+            c. Incorrect: There is a clear gender disparity.<br>
+            d. Incorrect: Option B is correct.<br>
+            e. Incorrect: The options are mutually exclusive.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> Which of the following is a core symptom of major depressive disorder?</p>
+        <ul class="options">
+            <li class="option" a-correct="false">A. Elevated mood</li>
+            <li class="option" data-correct="true">B. Low mood</li>
+            <li class="option" data-correct="false">C. Increased energy</li>
+            <li class="option" data-correct="false">D. Delusions and hallucinations</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Elevated mood is a symptom of mania.<br>
+            b. Correct: Low mood (depressed mood) is a cardinal symptom of MDD.<br>
+            c. Incorrect: Increased energy is a symptom of mania.<br>
+            d. Incorrect: Psychotic features can be present but are not a core symptom for diagnosis.<br>
+            e. Incorrect: The options are contradictory.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> Which of the following is NOT a common symptom of major depressive disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Suicidal ideation</li>
+            <li class="option" data-correct="false">B. Anhedonia</li>
+            <li class="option" data-correct="false">C. Low energy</li>
+            <li class="option" data-correct="true">D. High mood</li>
+            <li class="option" data-correct="false">E. Feelings of guilt</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Suicidal ideation is a common symptom of MDD.<br>
+            b. Incorrect: Anhedonia is a core symptom of MDD.<br>
+            c. Incorrect: Low energy or fatigue is a common symptom of MDD.<br>
+            d. Correct: High mood is characteristic of mania, the opposite of depression.<br>
+            e. Incorrect: Feelings of guilt are a common symptom of MDD.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> Which of the following is a potential complication of untreated depression?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Enhanced cognitive function</li>
+            <li class="option" data-correct="false">B. Improved relationships</li>
+            <li class="option" data-correct="true">C. Increased risk of suicide</li>
+            <li class="option" data-correct="false">D. Enhanced immune function</li>
+            <li class="option" data-correct="false">E. Decreased pain sensitivity</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Depression commonly causes cognitive dysfunction.<br>
+            b. Incorrect: Depression often strains relationships.<br>
+            c. Correct: Untreated depression is a major risk factor for suicide.<br>
+            d. Incorrect: Depression is associated with immune system suppression.<br>
+            e. Incorrect: Depression is often associated with increased pain sensitivity.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> A 25-year-old woman presents to your clinic complaining of intense fear and anxiety in social situations, especially when she has to speak in front of groups. She worries excessively about being judged or embarrassed, leading her to avoid social gatherings. She has experienced these symptoms for several years. Based on this description, which of the following is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Generalized Anxiety Disorder</li>
+            <li class="option" data-correct="true">B. Social Anxiety Disorder (Social Phobia)</li>
+            <li class="option" data-correct="false">C. Panic Disorder</li>
+            <li class="option" data-correct="false">D. Obsessive compulsive disorder</li>
+            <li class="option" data-correct="false">E. Major Depressive Disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: GAD involves worry about a wide range of topics, not just social situations.<br>
+            b. Correct: The symptoms described are the classic presentation of Social Anxiety Disorder.<br>
+            c. Incorrect: Panic disorder involves unexpected panic attacks and worry about future attacks.<br>
+            d. Incorrect: OCD involves obsessions and compulsions, which are not described.<br>
+            e. Incorrect: The core feature described is fear of social judgment, not low mood.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 30</div>
+</div>
+
+</body>
+</html>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

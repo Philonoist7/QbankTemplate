@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="dynamic-title-main">QBank Home</title>
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Arabic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #343a40;
+            --light-text-color: #ffffff;
+            --header-bg: #343a40;
+            --header-text: #f8f9fa;
+            --header-link: #00aeff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            padding-top: 80px; /* Space for fixed header */
+            color: var(--text-color);
+        }
+        .page-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+        .subject-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Aligns icon and text to top */
+            align-items: center;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid #e0e0e0;
+            padding: 18px 16px 12px 16px; /* top right bottom left */
+            margin: 6px;
+            min-width: 180px;
+            max-width: 180px; /* Fixed width */
+            min-height: 170px; /* Fixed height to ensure alignment */
+            height: 170px;     /* Fixed height */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevents content spill */
+        }
+        .subject-box i {
+            font-size: 2.5em; /* Increased icon size */
+            margin-bottom: 4px; /* Increased space below icon */
+            color: var(--primary-color); /* Default icon color */
+        }
+        .subject-box:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .subject-box .progress-display {
+            display: block;
+            margin-top: auto; /* Pushes progress to the bottom */
+            margin-bottom: 0; /* Align with bottom padding */
+            padding: 7px 10px;
+            background-color: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 5px;
+            color: #333;
+            font-size: 0.9em; /* Slightly smaller font for progress */
+            font-weight: bold;
+            text-align: center;
+            width: 100%; /* Take full width of the box */
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+      
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 6px 0;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .fixed-header .quran-verse {
+            display: inline-block;
+            font-family: 'Amiri', 'Scheherazade', serif;
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #ffae00;
+            letter-spacing: 0.5px;
+            padding: 0.2em 1em;
+            border-radius: 8px;
+            margin-left: 10px;
+            margin-right: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            direction: rtl;
+        }
+        @media (max-width: 600px) {
+            .fixed-header .quran-verse {
+                font-size: 1em;
+                padding: 0.2em 0.5em;
+            }
+        }
+
+        #pin-board {
+            background: #fffbe7;
+            border: 2.5px solid #ffe066;
+            border-radius: 14px;
+            margin: 0 auto 20px auto; /* Centered, more bottom margin */
+            padding: 15px 25px;
+            max-width: 700px; /* Slightly wider */
+            min-width: 320px;
+            width: fit-content;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+            font-size: 1.0em; /* Adjusted font size */
+            /* For RTL text (like Arabic) */
+            /* direction: rtl; */
+            /* text-align: right; */
+            transition: box-shadow 0.2s;
+        }
+        #pin-board h2 {
+            margin-top: 0;
+            margin-bottom: 10px; /* More space below heading */
+            font-size: 1.2em; /* Adjusted font size */
+            color: #b8860b;
+            letter-spacing: 0.5px;
+            /* text-align: right; */ /* For RTL */
+        }
+        #pin-board ul {
+            margin: 0;
+            padding-left: 20px; /* Standard LTR padding */
+            /* padding-right: 0; */ /* For RTL */
+            color: #7a6600;
+            font-size: 0.95em; /* Adjusted font size */
+            list-style-position: outside; /* Standard LTR list style */
+            /* direction: rtl; */ /* For RTL */
+            /* text-align: right; */ /* For RTL */
+        }
+        #pin-board li {
+            margin-bottom: 5px; /* Space between list items */
+            line-height: 1.6;
+            word-break: break-word;
+            /* padding-right: 0; */ /* For RTL */
+            /* margin-right: 24px; */ /* For RTL */
+        }
+
+        @media (max-width: 768px) { /* Adjust breakpoint for tablets */
+            .page-title {
+                font-size: 2em;
+                margin-bottom: 20px; /* Adjusted margin */
+            }
+            #pin-board {
+                margin: 10px 15px 20px 15px; /* Adjusted margins */
+                padding: 10px 15px; /* Adjusted padding */
+                max-width: 95vw; /* Max width for responsiveness */
+                font-size: 0.95em;
+            }
+            #pin-board h2 {
+                font-size: 1.15em;
+                /* padding-right: 10px; */ /* For RTL */
+            }
+            #pin-board ul {
+                font-size: 0.85em;
+                /* padding-left: 10px; */ /* For LTR */
+                /* padding-right: 10px; */ /* For RTL */
+            }
+            #pin-board li {
+                font-size: 0.95em;
+                line-height: 1.6;
+            }
+            .container {
+                gap: 15px; /* Reduced gap */
+                padding: 10px; /* Reduced padding */
+            }
+            .subject-box {
+                min-width: 140px; /* Adjusted min-width */
+                max-width: 140px; /* Adjusted max-width */
+                height: 150px;    /* Adjusted height */
+                min-height: 150px;
+                font-size: 1em; /* Adjusted font size */
+                padding: 12px 10px 8px 10px; /* Adjusted padding */
+            }
+            .subject-box i {
+                font-size: 2em; /* Adjusted icon size */
+                margin-bottom: 8px; /* Adjusted margin */
+            }
+            .subject-box .progress-display {
+                font-size: 0.85em; /* Adjusted font size */
+            }
+        }
+
+        @media (max-width: 480px) { /* Adjust breakpoint for mobile */
+             .page-title {
+                font-size: 1.8em;
+                margin-bottom: 16px;
+                margin-top: 10px;
+            }
+            #pin-board {
+                margin: 10px;
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+             #pin-board h2 {
+                font-size: 1.1em;
+            }
+            #pin-board ul {
+                font-size: 0.8em;
+            }
+             #pin-board li {
+                font-size: 0.9em;
+                line-height: 1.5;
+            }
+            .container {
+                gap: 10px;
+                padding: 5px;
+                 /* Enable flex-direction for better stacking on small screens if needed */
+                /* flex-direction: column; */
+                /* align-items: center; */
+            }
+            .subject-box {
+                /* If stacking vertically, width can be larger */
+                /* min-width: 80vw;  */
+                /* max-width: 90vw; */
+                /* height: auto; */
+                /* min-height: 0; */
+
+                /* For grid layout on small screens */
+                min-width: calc(50% - 20px); /* Two boxes per row with gap */
+                max-width: calc(50% - 20px);
+                height: 130px;
+                min-height: 130px;
+                font-size: 1.1em;
+            }
+            .subject-box i {
+                font-size: 2.2em;
+                margin-bottom: 4px; /* Increased space below icon */
+            }
+             .subject-box .progress-display {
+                font-size: 0.8em;
+            }
+        }
+
+          /* ====== CUSTOM ICON COLORS FOR SUBJECTS ====== */
+        /* Add your custom subject color classes here if needed */
+        /* Example: .subject-box.your-class-name i { color: #yourcolor; } */
+        .subject-box.surgery i { color: #e74c3c; } /* Example: Red for Surgery */
+        .subject-box.pharma i { color: #8e44ad; } /* Example: Purple for Pharmacology */
+
+
+
+        /* ====== END CUSTOM ICON COLORS ====== */
+
+
+    </style>
+    <!-- ====== MAIN PAGE SETTINGS ====== -->
+    <script>
+    /*
+        ====== EDIT ONLY THIS BLOCK FOR NEW MAIN PAGE VARIANTS ======
+        Change these variables for each new main page or to quickly update subjects.
+    */
+    window.MAIN_PAGE_SETTINGS = {
+        TITLE: 'Medical Student QBank', // <--- EDIT THIS: Your main QBank title
+        SUBJECTS: [
+            // --- EXAMPLE: Linking to a Group Page (Surgery) ---
+            {
+                name: 'Surgery QBank',                  // <--- EDIT THIS: Display name
+                link: 'surgery/surgery_qbank.html',     // <--- EDIT THIS: Path to your group_qbank.html
+                colorClass: 'surgery',                  // <--- EDIT THIS: CSS class for styling (define in <style>)
+                iconClass: 'fas fa-briefcase-medical',  // <--- EDIT THIS: Font Awesome icon
+                pageId: 'surgery_qbank'                 // <--- EDIT THIS: MUST MATCH 'GROUP_KEY' in surgery_qbank.html
+            },
+            // --- EXAMPLE: Linking to a Standalone Page (Pharmacology) ---
+            {
+                name: 'Pharmacology MCQs',             // <--- EDIT THIS: Display name
+                link: 'pharmacology/pharma_page.html', // <--- EDIT THIS: Path to your pharma_page.html
+                colorClass: 'pharma',                  // <--- EDIT THIS: CSS class for styling (define in <style>)
+                iconClass: 'fas fa-pills',             // <--- EDIT THIS: Font Awesome icon
+                pageId: 'pharma_overall'               // <--- EDIT THIS: MUST MATCH 'PAGE_ID' in pharma_page.html
+            },
+
+
+            // --- Add more subjects or groups below ---
+            // Example of another subject (standalone or group)
+            /*
+            {
+                name: 'Pharmacology MCQs',
+                link: 'pharmacology/pharma_qbank.html', // Or direct to a pharma_page.html
+                colorClass: 'pharma',
+                iconClass: 'fas fa-pills',
+                pageId: 'pharma_overall' // This would be a GROUP_KEY or a PAGE_ID
+            },
+            */
+            // Add or remove subjects here as needed
+        ]
+    };
+    /* ====== END MAIN_PAGE_SETTINGS ====== */
+
+    /*
+        ====== PROGRESS HANDLING FOR MAIN PAGE ======
+        - `SUMMARY_SUBJECTS`: List pageIds that represent aggregated summaries
+          (typically GROUP_KEYs from group_qbank.html pages).
+        - For these, progress is read from localStorage keys like `${pageId}_summary_scores`.
+        - For other pageIds, progress is calculated from `${pageId}_answers` and `${pageId}_scores`.
+    */
+    window.MAIN_PROGRESS_SHORTCUT = {
+        SUMMARY_SUBJECTS: [
+            'surgery_qbank', // <--- EDIT THIS: Add the 'pageId' (which is a GROUP_KEY) from above
+            'pharma_qbank' // 'pharma_overall',    // Add other GROUP_KEYs or summary pageIds here
+        ]
+    };
+    /* ====== END PROGRESS HANDLING SETTINGS ====== */
+    </script>
+</head>
+<body>
+    <div class="fixed-header">
+        <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+    </div>
+
+    <h1 class="page-title" id="main-page-title-display"></h1>
+
+    <!-- ====== PIN BOARD CONTENT ====== -->
+    <div id="pin-board"> <!-- Remove dir="rtl" and text-align:right if not using Arabic -->
+        <h2>📌 Pin Board</h2> <!-- <--- EDIT THIS: Pin board title -->
+        <ul>
+            <li>Welcome to the QBank! Select a subject to begin.</li> <!-- <--- EDIT THIS: Pin board item 1 -->
+            <li>Track your progress for each section.</li> <!-- <--- EDIT THIS: Pin board item 2 -->
+            <!-- Add more <li> items as needed -->
+        </ul>
+    </div>
+    <!-- ====== END PIN BOARD CONTENT ====== -->
+
+    <div class="container" id="subjects-container">
+        <!-- Subject boxes will be generated here by JavaScript -->
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const SETTINGS = window.MAIN_PAGE_SETTINGS;
+        const PROGRESS_SHORTCUT = window.MAIN_PROGRESS_SHORTCUT;
+
+        document.getElementById('dynamic-title-main').textContent = SETTINGS.TITLE;
+        document.getElementById('main-page-title-display').textContent = SETTINGS.TITLE;
+
+        const subjectsConfig = SETTINGS.SUBJECTS;
+        const subjectsContainer = document.getElementById('subjects-container');
+
+        subjectsConfig.forEach(subject => {
+            const boxLink = document.createElement('a');
+            boxLink.href = subject.link;
+            boxLink.classList.add('subject-box');
+            if (subject.colorClass) { // Add colorClass if provided
+                boxLink.classList.add(subject.colorClass);
+            }
+
+            const icon = document.createElement('i');
+            icon.className = subject.iconClass || 'fas fa-book'; // Default icon
+            boxLink.appendChild(icon);
+
+            const subjectNameTextNode = document.createTextNode(subject.name);
+            const subjectNameContainer = document.createElement('div'); // Wrapper for text
+            subjectNameContainer.style.flexGrow = "1"; // Allow text to take available space
+            subjectNameContainer.style.display = "flex";
+            subjectNameContainer.style.alignItems = "center"; // Vertically center text if it wraps
+            subjectNameContainer.appendChild(subjectNameTextNode);
+            boxLink.appendChild(subjectNameContainer);
+
+
+            const progressSpan = document.createElement('span');
+            progressSpan.classList.add('progress-display');
+            progressSpan.id = `${subject.pageId}-progress`; // Use pageId for unique ID
+            progressSpan.textContent = 'Loading...';
+            boxLink.appendChild(progressSpan);
+
+            subjectsContainer.appendChild(boxLink);
+        });
+
+        function getProgress(pageIdToLoad) { // Renamed parameter to avoid conflict
+            let attempted = 0, total = 0;
+            const pageIds = Array.isArray(pageIdToLoad) ? pageIdToLoad : [pageIdToLoad];
+
+            pageIds.forEach(pageId => {
+                if (PROGRESS_SHORTCUT.SUMMARY_SUBJECTS.includes(pageId)) {
+                    const summaryScoresData = localStorage.getItem(`${pageId}_summary_scores`);
+                    const summaryAnswersData = localStorage.getItem(`${pageId}_summary_answers`);
+                    if (summaryScoresData) {
+                        try {
+                            const parsedScores = JSON.parse(summaryScoresData);
+                            total += parsedScores.total || 0;
+                        } catch (e) { console.error(`Error parsing summary_scores for ${pageId}:`, e); }
+                    }
+                    if (summaryAnswersData) {
+                        try {
+                            const parsedAnswers = JSON.parse(summaryAnswersData);
+                            attempted += parsedAnswers.attempted || 0;
+                        } catch (e) { console.error(`Error parsing summary_answers for ${pageId}:`, e); }
+                    }
+                } else {
+                    const answersKey = `${pageId}_answers`;
+                    const scoresKey = `${pageId}_scores`;
+                    const savedAnswersData = localStorage.getItem(answersKey);
+                    const savedScoresData = localStorage.getItem(scoresKey);
+
+                    if (savedAnswersData) {
+                        try {
+                            const parsedAnswers = JSON.parse(savedAnswersData);
+                            if (parsedAnswers && typeof parsedAnswers === 'object') {
+                                Object.values(parsedAnswers).forEach(sectionAnswers => {
+                                    if (sectionAnswers && typeof sectionAnswers === 'object') {
+                                        Object.values(sectionAnswers).forEach(qAnswer => {
+                                            if (qAnswer && qAnswer.answered) {
+                                                attempted++;
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        } catch (e) { console.error(`Error parsing answers for ${pageId}:`, e); }
+                    }
+
+                    if (savedScoresData) {
+                        try {
+                            const parsedScores = JSON.parse(savedScoresData);
+                            if (parsedScores && parsedScores.all && typeof parsedScores.all.total === 'number') {
+                                total += parsedScores.all.total;
+                            } else if (parsedScores && typeof parsedScores === 'object' && !parsedScores.all) {
+                                // Fallback for older structure or if 'all' is missing but section totals exist
+                                Object.values(parsedScores).forEach(sectionScoreData => {
+                                    if (sectionScoreData && typeof sectionScoreData.total === 'number') {
+                                        total += sectionScoreData.total;
+                                    }
+                                });
+                            }
+                        } catch (e) { console.error(`Error parsing scores for ${pageId}:`, e); }
+                    }
+                }
+            });
+            if (total < attempted && total === 0) { // If total is 0 but questions were attempted (e.g. from summary pages not yet reflecting total)
+                 // This scenario might indicate an issue if `total` is genuinely 0 from the source page,
+                 // but for display purposes on main, showing attempted might be better than "0/0".
+                 // However, if total is correctly fetched and is > 0, it should be used.
+                 // Let's assume if total is 0, it means the source page hasn't saved its total yet or isn't a QBank page.
+            } else if (total < attempted) {
+                total = attempted; // Ensure total is at least the number of attempted questions
+            }
+            return { attempted, total };
+        }
+
+        subjectsConfig.forEach(subject => {
+            const progressElement = document.getElementById(`${subject.pageId}-progress`);
+            if (!progressElement) {
+                console.warn(`Progress element for ${subject.pageId} not found.`);
+                return;
+            }
+
+            const { attempted, total } = getProgress(subject.pageId);
+
+            if (total > 0) {
+                progressElement.textContent = `${attempted} / ${total}`;
+            } else {
+                progressElement.textContent = attempted > 0 ? `${attempted} / ?` : `Not Started`;
+            }
+        });
+    });
+    </script>
+
+    <footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>
