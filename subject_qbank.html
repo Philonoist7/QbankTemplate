@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- ====== GROUP PAGE SETTINGS ====== -->
 <script>
 /*
@@ -17,18 +33,22 @@
     const groupKeyAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
 
     window.GROUP_SETTINGS = {
-        GROUP_NAME: 'Surgery',           // <--- EDIT THIS: Displayed in title and summary
-        GROUP_KEY: groupKeyAuto, // Automatically set from filename
+        GROUP_KEY: groupKeyAuto,            // Automatically set from filename
         HOME_LINK: '../main.html',          // <--- EDIT THIS: Path to the main menu page. (e.g., '../main.html' if in subfolder)
         
+
+
+        GROUP_NAME: 'editme',           // <--- EDIT THIS: Displayed in title and summary
         SUBJECTS: [
             // --- EXAMPLE: Linking to a Subject Question Page (Neurosurgery) ---
             {
-                name: 'Neurosurgery MCQs',          // <--- EDIT THIS: Display name for the subject box
-                link: 'neurosurgery_page.html',     // <--- EDIT THIS: Path to the question_page.html for this subject
-                colorClass: 'neurosurgery',     // <--- EDIT THIS: Custom CSS class for styling this box (define in <style>)
-                pageId: 'neurosurgery_page'         // <--- EDIT THIS: MUST MATCH the PAGE_ID from neurosurgery_page.html
+                name: 'editme',          // <--- EDIT THIS: Display name for the subject box
+                link: 'editme_page.html',     // <--- EDIT THIS: Path to the question_page.html for this subject
+                colorClass: 'editme',     // <--- EDIT THIS: Custom CSS class for styling this box (define in <style>)
+                pageId: 'editme_page'         // <--- EDIT THIS: MUST MATCH the PAGE_ID from neurosurgery_page.html
             },
+
+
             // --- Add more subjects within this group below ---
             /*
             {
@@ -42,8 +62,39 @@
         ]
     };
 })();
+
 /* ====== END GROUP_SETTINGS ====== */
 </script>
+
+
+
+<style> 
+
+    /* ====== CUSTOM BOX COLORS FOR SUBJECTS IN THIS GROUP ====== */
+/* Add styles for 'colorClass' defined in GROUP_SETTINGS.SUBJECTS */
+/* Example: .box.your-subject-class { background-color: #yourcolor; } */
+
+.box.editme { background-color: #1e30d1;  }
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <title id="dynamic-title-group"></title>
 <!-- Google Fonts - Montserrat -->
@@ -189,12 +240,6 @@ body {
     }
 }
 
-/* ====== CUSTOM BOX COLORS FOR SUBJECTS IN THIS GROUP ====== */
-/* Add styles for 'colorClass' defined in GROUP_SETTINGS.SUBJECTS */
-/* Example: .box.your-subject-class { background-color: #yourcolor; } */
-
-.box.neurosurgery { background-color: #4CAF50; /* Green for Neurosurgery */ }
-.box.gensurg { background-color: #2196F3; /* Blue for General Surgery */ }
 
 /* ====== END CUSTOM BOX COLORS ====== */
 
