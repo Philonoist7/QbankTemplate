@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
         :root {
             --primary-color: #007bff;
@@ -277,19 +278,15 @@
             }
         }
 
-          /* ====== CUSTOM ICON COLORS FOR SUBJECTS ====== */
-        /* Add your custom subject color classes here if needed */
-        /* Example: .subject-box.your-class-name i { color: #yourcolor; } */
-        .subject-box.surgery i { color: #e74c3c; } /* Example: Red for Surgery */
-        .subject-box.pharma i { color: #8e44ad; } /* Example: Purple for Pharmacology */
-
 
 
         /* ====== END CUSTOM ICON COLORS ====== */
 
 
     </style>
-    <!-- ====== MAIN PAGE SETTINGS ====== -->
+
+   
+    
     <script>
     /*
         ====== EDIT ONLY THIS BLOCK FOR NEW MAIN PAGE VARIANTS ======
@@ -297,24 +294,20 @@
     */
     window.MAIN_PAGE_SETTINGS = {
         TITLE: 'Medical Student QBank', // <--- EDIT THIS: Your main QBank title
+       
         SUBJECTS: [
             // --- EXAMPLE: Linking to a Group Page (Surgery) ---
             {
-                name: 'Surgery QBank',                  // <--- EDIT THIS: Display name
-                link: 'surgery/surgery_qbank.html',     // <--- EDIT THIS: Path to your group_qbank.html
-                colorClass: 'surgery',                  // <--- EDIT THIS: CSS class for styling (define in <style>)
-                iconClass: 'fas fa-briefcase-medical',  // <--- EDIT THIS: Font Awesome icon
-                pageId: 'surgery_qbank'                 // <--- EDIT THIS: MUST MATCH 'GROUP_KEY' in surgery_qbank.html
-            },
-            // --- EXAMPLE: Linking to a Standalone Page (Pharmacology) ---
-            {
-                name: 'Pharmacology MCQs',             // <--- EDIT THIS: Display name
-                link: 'pharmacology/pharma_page.html', // <--- EDIT THIS: Path to your pharma_page.html
-                colorClass: 'pharma',                  // <--- EDIT THIS: CSS class for styling (define in <style>)
-                iconClass: 'fas fa-pills',             // <--- EDIT THIS: Font Awesome icon
-                pageId: 'pharma_overall'               // <--- EDIT THIS: MUST MATCH 'PAGE_ID' in pharma_page.html
+                name: 'editme MCQs',                   // <--- EDIT THIS: Display name
+                link: 'editme/editme_qbank.html',   // <--- EDIT THIS: Path to your group_qbank.html
+                colorClass: 'editme',                   // <--- EDIT THIS: CSS class for styling (define in <style>)
+                iconClass: 'fas fa-briefcase-medical',      // <--- EDIT THIS: Font Awesome icon
+                pageId: 'editme_qbank'                  // <--- EDIT THIS: MUST MATCH 'GROUP_KEY' in surgery_qbank.html
             },
 
+
+            // --- EXAMPLE: Linking to a Standalone Page (Pharmacology) ---
+           
 
             // --- Add more subjects or groups below ---
             // Example of another subject (standalone or group)
@@ -341,13 +334,33 @@
     */
     window.MAIN_PROGRESS_SHORTCUT = {
         SUMMARY_SUBJECTS: [
-            'surgery_qbank', // <--- EDIT THIS: Add the 'pageId' (which is a GROUP_KEY) from above
-            'pharma_qbank' // 'pharma_overall',    // Add other GROUP_KEYs or summary pageIds here
+            'editme_qbank',         // <--- EDIT THIS: Add the 'pageId' (which is a GROUP_KEY) from above
+            "editme_qbank",
+            
+
+
+
         ]
+
     };
     /* ====== END PROGRESS HANDLING SETTINGS ====== */
     </script>
 </head>
+
+ <style>
+
+ /* ====== CUSTOM ICON COLORS FOR SUBJECTS ====== */
+        /* Add your custom subject color classes here if needed */
+        /* Example: .subject-box.subject i { color: #yourcolor; } */
+
+        .subject-box.editme i { color: #e7a33c; } /* Example: Red for  */
+        
+
+</style>
+      
+
+
+
 <body>
     <div class="fixed-header">
         <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
